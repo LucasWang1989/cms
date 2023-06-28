@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="nz.ac.sit.cms.mapper.UserMapper">
+    <resultMap id="UserMap" type="nz.ac.sit.cms.domain.user.UserModel">
+        <id column="F_ID" property="id"/>
+        <result column="F_USERNAME" property="userName"/>
+        <result column="F_EMAIL" property="email"/>
+        <result column="F_PASSWORD" property="password"/>
+        <result column="F_CREATED_DATE" property="updateDate"/>
+        <result column="F_UPDATED_DATE" property="createdDate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+         F_USERNAME, F_EMAIL, F_PASSWORD, F_CREATED_DATE, F_UPDATED_DATE
+    </sql>
+
+    <insert id="addUser"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            parameterType="nz.ac.sit.cms.domain.user.UserModel">
+        insert into cms_user_info(<include refid="Base_Column_List"/>)
+        values (
+        #{userName},
+        #{email},
+        #{password},
+        #{updateDate},
+        #{createdDate}
+        )
+    </insert>
+
+    <select id="fetchUserByUsername" parameterType="java.lang.String" resultMap="UserMap">
+        select F_ID, <include refid="Base_Column_List"></include>
+        from cms_user_info
+        where F_USERNAME = #{userName}
+
+    </select>
+
+</mapper>

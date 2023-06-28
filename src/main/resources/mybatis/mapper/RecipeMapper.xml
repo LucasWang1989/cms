@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="nz.ac.sit.cms.mapper.RecipeMapper">
+    <resultMap id="RecipeMap" type="nz.ac.sit.cms.domain.recipe.RecipeModel">
+        <id column="F_ID" property="id"/>
+        <result column="F_TITLE" property="title"/>
+        <result column="F_INTRO" property="intro"/>
+        <result column="F_INGREDIENTS" property="ingredients"/>
+        <result column="F_SUB_INGREDIENTS" property="subIngredients"/>
+        <result column="F_COVER_PAGE_URL" property="coverPageUrl"/>
+        <result column="F_COVER_VIDEO_URL" property="coverVideoUrl"/>
+        <result column="F_MEDIA_TYPE" property="mediaType"/>
+        <result column="F_USER_NAME" property="username"/>
+        <result column="F_UPDATE_DATE" property="updateDate"/>
+        <result column="F_CREATED_DATE" property="createdDate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+         F_TITLE, F_INTRO, F_INGREDIENTS, F_SUB_INGREDIENTS, F_COVER_PAGE_URL,
+         F_COVER_VIDEO_URL, F_MEDIA_TYPE, F_USER_NAME, F_UPDATE_DATE, F_CREATED_DATE
+    </sql>
+
+    <insert id="addRecipe"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            parameterType="nz.ac.sit.cms.domain.recipe.RecipeModel">
+        insert into cms_recipe_info(<include refid="Base_Column_List"/>)
+        values (
+        #{title},
+        #{intro},
+        #{ingredients},
+        #{subIngredients},
+        #{coverPageUrl},
+        #{coverVideoUrl},
+        #{mediaType},
+        #{username},
+        #{updateDate},
+        #{createdDate}
+        )
+    </insert>
+
+    <select id="fetchRecipeByKeyword" parameterType="java.lang.String" resultMap="RecipeMap">
+        select ri.F_ID, ri.F_TITLE, ri.F_INTRO,
+               ri.F_INGREDIENTS, ri.F_SUB_INGREDIENTS, ri.F_COVER_PAGE_URL,F_COVER_VIDEO_URL,
+               ri.F_MEDIA_TYPE, ri.F_USER_NAME, ri.F_UPDATE_DATE, ri.F_CREATED_DATE
+        from cms_recipe_info ri
+        where ri.F_TITLE like concat('%',#{keyWord},'%')
+              or exists(select 1 from cms_recipe_category_relation rcr, cms_recipe_category_info rci
+                where ri.F_ID = rcr.F_RECIPE_ID and rcr.F_CATEGORY_ID = rci.F_ID
+                and rci.F_NAME like concat('%',#{keyWord},'%'))
+        order by F_UPDATE_DATE desc
+
+    </select>
+
+    <select id="fetchRecipe" resultMap="RecipeMap">
+        select ri.F_ID, ri.F_TITLE, ri.F_INTRO,
+               ri.F_INGREDIENTS, ri.F_SUB_INGREDIENTS, ri.F_COVER_PAGE_URL,F_COVER_VIDEO_URL,
+               ri.F_MEDIA_TYPE, ri.F_USER_NAME, ri.F_UPDATE_DATE, ri.F_CREATED_DATE
+        from cms_recipe_info ri
+        order by F_UPDATE_DATE desc limit 20
+
+    </select>
+
+    <select id="fetchRecipeByUsername" parameterType="java.lang.String" resultMap="RecipeMap">
+        select ri.F_ID, ri.F_TITLE, ri.F_INTRO,
+               ri.F_INGREDIENTS, ri.F_SUB_INGREDIENTS, ri.F_COVER_PAGE_URL,F_COVER_VIDEO_URL,
+               ri.F_MEDIA_TYPE, ri.F_USER_NAME, ri.F_UPDATE_DATE, ri.F_CREATED_DATE
+        from cms_recipe_info ri
+        where ri.F_USER_NAME like concat('%',#{username},'%')
+        order by F_UPDATE_DATE desc
+
+    </select>
+</mapper>

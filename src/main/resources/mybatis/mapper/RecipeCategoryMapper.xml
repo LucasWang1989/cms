@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="nz.ac.sit.cms.mapper.RecipeCategoryMapper">
+    <resultMap id="RecipeCategoryMap" type="nz.ac.sit.cms.domain.recipe.RecipeCategoryModel">
+        <id column="F_ID" property="id"/>
+        <result column="F_NAME" property="name"/>
+        <result column="F_UPDATE_DATE" property="updateDate"/>
+        <result column="F_CREATED_DATE" property="createdDate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        F_NAME, F_UPDATE_DATE, F_CREATED_DATE
+    </sql>
+
+    <insert id="addCategory" parameterType="nz.ac.sit.cms.domain.recipe.RecipeCategoryModel">
+        insert into cms_recipe_category_info(<include refid="Base_Column_List"/>)
+        values (#{name},#{updateDate},#{createdDate})
+    </insert>
+
+    <select id="acquireCategory" resultMap="RecipeCategoryMap">
+        select * from cms_recipe_category_info
+    </select>
+
+</mapper>

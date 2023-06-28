@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="nz.ac.sit.cms.mapper.RecipeStepMapper">
+    <resultMap id="RecipeStepMap" type="nz.ac.sit.cms.domain.recipe.RecipeStepModel">
+        <id column="F_ID" property="id"/>
+        <result column="F_RECIPE_ID" property="recipeId"/>
+        <result column="F_STEP_IMG_URL" property="stepImgUrl"/>
+        <result column="F_STEP_CONTENT" property="stepContent"/>
+        <result column="F_STEP_ORDER" property="stepOrder"/>
+        <result column="F_UPDATE_DATE" property="updateDate"/>
+        <result column="F_CREATED_DATE" property="createdDate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+         F_RECIPE_ID, F_STEP_IMG_URL, F_STEP_CONTENT, F_STEP_ORDER, F_UPDATE_DATE, F_CREATED_DATE
+    </sql>
+
+    <insert id="addRecipeStep" parameterType="java.util.List">
+        insert into cms_recipe_step_info(<include refid="Base_Column_List"/>)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.recipeId},
+            #{item.stepImgUrl},
+            #{item.stepContent},
+            #{item.stepOrder},
+            #{item.updateDate},
+            #{item.createdDate}
+            )
+        </foreach>
+    </insert>
+
+    <select id="fetchRecipeSteps" parameterType="java.lang.Integer" resultMap="RecipeStepMap">
+        select <include refid="Base_Column_List"/>
+            from cms_recipe_step_info
+            where F_RECIPE_ID = #{recipeId}
+    </select>
+
+
+</mapper>
